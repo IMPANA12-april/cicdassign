@@ -1,1 +1,48 @@
+name: Deploying multiple Lambdas
+
+on:
+  push:
+    branches:
+      - main  # The workflow will trigger when there's a push to the 'main' branch
+
+jobs:
+  lambda1:
+    runs-on: ubuntu-latest  # The workflow will run on an Ubuntu-based virtual environment
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3  # Checkout the code in the repository
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16  # Define the Node.js version to be used (adjust if necessary)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2  # Update AWS region as per your requirement
+      - name: Zip lambda1 code
+        run: zip -j lambda1.zip ./lambda1/index.js  # Create a zip file from lambda1
+      - name: Deploy lambda1 to AWS
+        run: aws lambda update-function-code --function-name=lambda1 --zip-file=fileb://lambda1.zip  # Deploy lambda1 to AWS Lambda
+
+  lambda2:
+    runs-on: ubuntu-latest  # The workflow will run on an Ubuntu-based virtual environment
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3  # Checkout the code in the repository
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16  # Define the Node.js version to be used (adjust if necessary)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2  # Update AWS region as per your requirement
+      - name: Zip lambda2 code
+        run: zip -j lambda2.zip ./lambda2/index.js  # Create a zip file from lambda2
+      - name: Deploy lambda2 to AWS
+        run: aws lambda update-function-code --function-name=lambda2 --zip-file=fileb://lambda2.zip  # Deploy lambda2 to AWS Lambda
 
